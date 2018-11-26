@@ -55,12 +55,26 @@ class ll.Tree
 
         @top.selectAll ".branch"
             .on "click", @branchClicked
+        @top.selectAll ".branch"
+            .on "contextmenu", @contextMenu
         @top.selectAll ".leaf"
             .on "click", @leafClicked
         @top.selectAll "svg"
             .on "click", @svgClicked
         return
-        
+
+    contectMenu: () =>
+        d3.event
+            .stopPropagation
+        elem = d3.select d3.event.currentTarget
+        if elem.classed "tree"
+            @toggleMenuOn
+        return
+
+    toggleMenuOn: () ->
+        menu = d3.select ".context-menu"
+            
+            
     branchClicked: () =>
         d3.event
             .stopPropagation()
@@ -70,8 +84,8 @@ class ll.Tree
             elem.classed "expanded", false
         else
             elem.classed "expanded", true
-            d3.html "/tree/?elemname=#{elem.attr 'elemname'}&elemtype=#{elem.attr 'elemtype'}&parentname=#{elem.attr 'parentname'}",
-                (e) => @newChildren(e, elem)
+            d3.json "/tree/?elemname=#{elem.attr 'elemname'}&elemtype=#{elem.attr 'elemtype'}&parentname=#{elem.attr 'parentname'}"
+                .then @newChildren(e, elem)
         return
 
     newChildren: (html, elem) ->
