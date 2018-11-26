@@ -13,6 +13,7 @@ ll.Tree = class Tree {
   constructor(containerid, treename) {
     this.dbchanged = this.dbchanged.bind(this);
     this.initial = this.initial.bind(this);
+    this.contectMenu = this.contectMenu.bind(this);
     this.branchClicked = this.branchClicked.bind(this);
     this.containerid = containerid;
     this.treename = treename;
@@ -60,8 +61,23 @@ ll.Tree = class Tree {
       }
     });
     this.top.selectAll(".branch").on("click", this.branchClicked);
+    this.top.selectAll(".branch").on("contextmenu", this.contextMenu);
     this.top.selectAll(".leaf").on("click", this.leafClicked);
     this.top.selectAll("svg").on("click", this.svgClicked);
+  }
+
+  contectMenu() {
+    var elem;
+    d3.event.stopPropagation;
+    elem = d3.select(d3.event.currentTarget);
+    if (elem.classed("tree")) {
+      this.toggleMenuOn;
+    }
+  }
+
+  toggleMenuOn() {
+    var menu;
+    return menu = d3.select(".context-menu");
   }
 
   branchClicked() {
@@ -73,13 +89,13 @@ ll.Tree = class Tree {
       elem.classed("expanded", false);
     } else {
       elem.classed("expanded", true);
-      d3.html(`/tree/?elemname=${elem.attr('elemname')}&elemtype=${elem.attr('elemtype')}&parentname=${elem.attr('parentname')}`, (e) => {
-        return this.newChildren(e, elem);
+      d3.json(`/tree/?elemname=${elem.attr('elemname')}&elemtype=${elem.attr('elemtype')}&parentname=${elem.attr('parentname')}`).then((json) => {
+        return this.newChildren(json, elem);
       });
     }
   }
 
-  newChildren(html, elem) {
+  newChildren(json, elem) {
     elem.node().appendChild(html);
     elem.selectAll(".branch").on("click", this.branchClicked);
     elem.selectAll(".leaf").on("click", this.leafClicked);

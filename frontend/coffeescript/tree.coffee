@@ -85,10 +85,10 @@ class ll.Tree
         else
             elem.classed "expanded", true
             d3.json "/tree/?elemname=#{elem.attr 'elemname'}&elemtype=#{elem.attr 'elemtype'}&parentname=#{elem.attr 'parentname'}"
-                .then @newChildren(e, elem)
+                .then (json) => @newChildren(json, elem)
         return
 
-    newChildren: (html, elem) ->
+    newChildren: (json, elem) ->
         elem.node()
             .appendChild html
             
